@@ -7,26 +7,28 @@ defmodule AiChatbot.Groq do
     if is_nil(api_key) do
       {:error, "Missing GROQ_API_KEY"}
     else
-      headers = [
-        {"Content-Type", "application/json"},
-        {"Authorization", "Bearer #{api_key}"}
-      ]
+      req =
+        Req.new(
+          url: @url,
+          json: %{
+            model: "llama-3.1-8b-instant",
+            messages: [
+              %{role: "system", content: "You are a helpful assistant."},
+              %{role: "user", content: message}
+            ]
+          },
+          headers: [authorization: "Bearer #{api_key}"]
+        )
 
-      body =
-        Jason.encode!(%{
-          model: "llama-3.1-8b-instant",
-          messages: [
-            %{role: "system", content: "You are a helpful assistant."},
-            %{role: "user", content: message}
-          ]
-        })
-
-      case HTTPoison.post(@url, body, headers, []) do
-        {:ok, %{status_code: 200, body: body}} ->
+      case Req.post(req) do
+        {:ok, %Req.Response{status: 200, body: body}} ->
           parse(body)
 
-        {:ok, %{status_code: code, body: body}} ->
-          {:error, "HTTP #{code}: #{body}"}
+        {:ok, %Req.Response{status: status, body: body}} ->
+          {:error, "HTTP #{status}: #{inspect(body)}"}
+
+        {:error, %Req.TransportError{reason: reason}} ->
+          {:error, reason}
 
         {:error, reason} ->
           {:error, reason}
