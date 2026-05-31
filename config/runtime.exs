@@ -22,7 +22,7 @@ config :ai_chatbot,
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
-if System.get_env("PHX_SERVER") do
+if System.get_env("PHX_SERVER") || System.get_env("RAILWAY_PUBLIC_DOMAIN") do
   config :ai_chatbot, AiChatbotWeb.Endpoint, server: true
 end
 
@@ -37,12 +37,9 @@ if config_env() == :prod do
   # variable instead.
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+      Base.encode16(:crypto.strong_rand_bytes(48))
 
-  host = System.get_env("PHX_HOST") || "example.com"
+  host = System.get_env("PHX_HOST") || System.get_env("RAILWAY_PUBLIC_DOMAIN") || "example.com"
 
   config :ai_chatbot, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
