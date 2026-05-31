@@ -36,13 +36,11 @@ defmodule AiChatbot.Groq do
     end
   end
 
-  defp parse(body) do
-    case Jason.decode(body) do
-      {:ok, %{"choices" => [first | _]}} ->
-        {:ok, first["message"]["content"]}
+  defp parse(%{"choices" => [first | _]}) do
+    {:ok, first["message"]["content"]}
+  end
 
-      error ->
-        error
-    end
+  defp parse(body) do
+    {:error, "unexpected response: #{inspect(body)}"}
   end
 end
