@@ -254,7 +254,11 @@
             .getElementById("typing")
             .classList.add("hidden")
 
-          if (data.reply) {
+          if (!response.ok) {
+
+            addMessage(data.error || "Groq API error", "ai")
+
+          } else if (data.reply) {
 
             addMessage(data.reply, "ai")
 

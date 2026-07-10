@@ -8,10 +8,16 @@ defmodule AiChatbotWeb.ChatController do
       {:ok, reply} ->
         json(conn, %{reply: reply})
 
-      {:error, error} ->
+      {:error, status, error} ->
         conn
-        |> put_status(500)
-        |> json(%{error: inspect(error)})
+        |> put_status(status)
+        |> json(%{error: error})
     end
+  end
+
+  def chat(conn, _params) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: "Message is required"})
   end
 end

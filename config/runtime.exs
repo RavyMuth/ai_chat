@@ -1,7 +1,10 @@
 import Config
 
-if config_env() == :dev do
-  System.put_env("GROQ_API_KEY", Dotenvy.source!([".env"])["GROQ_API_KEY"])
+if config_env() == :dev and File.exists?(".env") do
+  case Dotenvy.source!([".env"])["GROQ_API_KEY"] do
+    key when is_binary(key) and key != "" -> System.put_env("GROQ_API_KEY", key)
+    _key -> :ok
+  end
 end
 
 config :ai_chatbot,
