@@ -1,6 +1,6 @@
 FROM hexpm/elixir:1.18.3-erlang-27.3.4-alpine-3.21.3 AS build
 
-RUN apk add --no-cache build-base git nodejs npm
+RUN apk add --no-cache build-base git
 
 WORKDIR /app
 
@@ -14,14 +14,10 @@ RUN mix deps.get --only prod && mix deps.compile
 
 COPY assets assets
 COPY priv priv
-
-RUN npm install --prefix assets --no-audit --no-fund
-RUN npm run deploy --prefix assets
-RUN mix phx.digest
-
 COPY lib lib
-RUN mix compile
 
+RUN mix compile
+RUN mix assets.deploy
 RUN mix release
 
 FROM alpine:3.21 AS app

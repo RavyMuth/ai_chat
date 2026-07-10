@@ -18,6 +18,7 @@ defmodule AiChatbotWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/health", HealthController, :index
   end
 
   scope "/api", AiChatbotWeb do

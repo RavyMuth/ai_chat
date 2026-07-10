@@ -6,7 +6,7 @@
   },
   "deploy": {
     "startCommand": "bin/ai_chatbot start",
-    "healthcheckPath": "/",
+    "healthcheckPath": "/health",
     "restartPolicyType": "ON_FAILURE"
   }
 }
